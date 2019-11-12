@@ -58,6 +58,13 @@
     <Compile Include="LoginForm.Designer.cs">
       <DependentUpon>LoginForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="Models\Admin.cs" />
+    <Compile Include="Models\BaseModel.cs" />
+    <Compile Include="Models\Director.cs" />
+    <Compile Include="Models\Movie.cs" />
+    <Compile Include="Models\MovieGenre.cs" />
+    <Compile Include="Models\User.cs" />
+    <Compile Include="Models\UserMovie.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="LoginForm.resx">
