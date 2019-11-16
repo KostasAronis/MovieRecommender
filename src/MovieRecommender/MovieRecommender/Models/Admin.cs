@@ -8,5 +8,7 @@ namespace MovieRecommender.Models
 {
     public class Admin : BaseModel
     {
+        public string Email { get; set; }
+        public string Password { get; set; }
     }
 }

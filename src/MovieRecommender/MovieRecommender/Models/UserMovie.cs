@@ -9,8 +9,8 @@ namespace MovieRecommender.Models
     public class UserMovie
     {
         public int Id { get; set; }
-        public string UserId { get; set; }
-        public string MovieId { get; set; }
+        public User User { get; set; }
+        public Movie Movie { get; set; }
         public MovieStatus MovieStatus { get; set; }
     }
     public enum MovieStatus
