@@ -18,7 +18,13 @@ namespace MovieRecommender
         {
             _db = dbContext;
             InitializeComponent();
+            this.FormClosed += LoginForm_FormClosed;
         }
+        private void LoginForm_FormClosed(object sender, FormClosedEventArgs e)
+        {
+            Application.Exit();
+        }
+
         private string getEmailInput()
         {
             return emailBox.Text;
@@ -42,32 +48,36 @@ namespace MovieRecommender
                 return;
             var email = getEmailInput();
             var pass = getPassInput();
+            User user;
             switch (GetUserStatus(email, pass))
             {
                 case UserStatus.NotFound:
                     MessageBox.Show("No user found with the provided email/password combination!");
                     break;
+                case UserStatus.NotApproved:
+                    MessageBox.Show("Your registration request has not yet been approved by the administrators!");
+                    break;
                 case UserStatus.ApprovedUser:
-                    var user = GetUser(email, pass);
+                    user = GetUser(email, pass);
                     var dashboardForm = new UserDashboardForm(_db, user);
-                    this.Close();
+                    this.Hide();
                     dashboardForm.Show();
                     break;
                 case UserStatus.FirstLogin:
+                    user = GetUser(email, pass);
+                    var firstLoginForm = new FirstLoginForm(_db, user);
+                    this.Hide();
+                    firstLoginForm.Show();
                     break;
                 case UserStatus.Admin:
                     var adminForm = new AdminForm(_db);
-                    this.Close();
+                    this.Hide();
                     adminForm.Show();
-                    break;
-                case UserStatus.NotApproved:
-                    MessageBox.Show("Your registration request has not yet been approved by the administrators!");
                     break;
                 default:
                     break;
             }
         }
-
         private void register_button_Click(object sender, EventArgs e)
         {
             if (inputEmpty())

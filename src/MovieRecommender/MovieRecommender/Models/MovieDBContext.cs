@@ -64,7 +64,7 @@ namespace MovieRecommender.Models
                 Description = "An orphaned boy enrolls in a school of wizardry, where he learns the truth about himself, his family and the terrible evil that haunts the magical world.",
                 Director = "Chris Columbus",
                 Genres = new List<MovieGenre>(),
-                Price = 22.59
+                Price = 48.23
             };
             harryPotter.Genres.Add(fantasy);
             harryPotter.Genres.Add(action);

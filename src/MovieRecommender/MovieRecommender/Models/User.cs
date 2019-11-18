@@ -16,9 +16,9 @@ namespace MovieRecommender.Models
         }
         public string Email { get; set; }
         public string Password { get; set; }
+        public UserStatus UserStatus { get; set; }
         public string Gender { get; set; }
         public int Age { get; set; }
-        public UserStatus UserStatus { get; set; }
         public List<MovieGenre> FavoriteGenres { get; set; }
         public List<UserMovie> UserMovies { get; set; }
 

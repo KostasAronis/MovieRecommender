@@ -17,6 +17,7 @@ namespace MovieRecommender
         private MovieDBContext _db;
         private User _user;
         public List<Movie> Movies;
+        string currentView;
 
         public UserDashboardForm(MovieDBContext db, User user)
         {
@@ -24,8 +25,7 @@ namespace MovieRecommender
             _db = db;
             _user = user;
             this.FormClosed += UserDashboardForm_FormClosed;
-            Movies = getDashboardMovies();
-            movieListView.SetObjects(Movies);
+            goToDashboard();
         }
         private List<Movie> getDashboardMovies()
         {
@@ -68,36 +68,106 @@ namespace MovieRecommender
         {
             Application.Exit();
         }
-
         private void dashboardButton_Click(object sender, EventArgs e)
+        {
+            goToDashboard();
+        }
+        private void ownedButton_Click(object sender, EventArgs e)
+        {
+            goToOwned();
+        }
+        private void suggestionsButton_Click(object sender, EventArgs e)
+        {
+            goToSuggestions();
+        }
+        private void goToDashboard()
         {
             viewLabel.Text = "Dashboard";
             Movies = getDashboardMovies();
             movieListView.SetObjects(Movies);
+            currentView = "Dashboard";
         }
-
-        private void ownedButton_Click(object sender, EventArgs e)
-        {
-            viewLabel.Text = "Owned";
-            Movies = getOwnedMovies();
-            movieListView.SetObjects(Movies);
-        }
-
-        private void suggestionsButton_Click(object sender, EventArgs e)
+        private void goToSuggestions()
         {
             viewLabel.Text = "Suggested";
             Movies = getSuggestedMovies();
             movieListView.SetObjects(Movies);
+            currentView = "Suggested";
         }
-
+        private void goToOwned()
+        {
+            viewLabel.Text = "Owned";
+            Movies = getOwnedMovies();
+            movieListView.SetObjects(Movies);
+            currentView = "Owned";
+        }
+        private void refreshList()
+        {
+            switch (currentView)
+            {
+                case "Dashboard":
+                    goToDashboard();
+                    break;
+                case "Owned":
+                    goToOwned();
+                    break;
+                case "Suggested":
+                    goToSuggestions();
+                    break;
+            }
+        }
         private void movieListView_ButtonClick(object sender, BrightIdeasSoftware.CellClickEventArgs e)
         {
-            var selectedMovie = (Movie)e.Item.RowObject;                
+            var selectedMovie = (Movie)e.Item.RowObject;
             if (e.Column == descriptionColumn)
             {
                 MessageBox.Show(selectedMovie.Description);
                 return;
             }
+            if (e.Column == likeColumn)
+            {
+                var umovie = _user.UserMovies.Where(um => um.Movie.Id == selectedMovie.Id).FirstOrDefault();
+                if (umovie != null)
+                {
+                    if(umovie.MovieStatus == MovieStatus.Owned)
+                    {
+                        umovie.MovieStatus = MovieStatus.Liked;
+                    }
+                    else
+                    {
+                        umovie.MovieStatus = MovieStatus.Owned;
+                    }
+                    _db.SaveChanges();
+                }
+            }
+            if (e.Column == dislikeColumn)
+            {
+                var umovie = _user.UserMovies.Where(um => um.Movie.Id == selectedMovie.Id).FirstOrDefault();
+                if (umovie != null)
+                {
+                    if (umovie.MovieStatus == MovieStatus.Owned)
+                    {
+                        umovie.MovieStatus = MovieStatus.Disliked;
+                    }
+                    else
+                    {
+                        umovie.MovieStatus = MovieStatus.Owned;
+                    }
+                    _db.SaveChanges();
+                }
+            }
+            if (e.Column == purchaseColumn)
+            {
+                var umovie = new UserMovie()
+                {
+                    Movie = selectedMovie,
+                    User = _user,
+                    MovieStatus = MovieStatus.Owned
+                };
+                _user.UserMovies.Add(umovie);
+                _db.SaveChanges();
+            }
+            refreshList();
         }
     }
 }

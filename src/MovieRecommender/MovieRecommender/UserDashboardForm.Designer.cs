@@ -68,11 +68,12 @@
             this.dislikeColumn,
             this.purchaseColumn});
             this.movieListView.Cursor = System.Windows.Forms.Cursors.Default;
+            this.movieListView.ForeColor = System.Drawing.SystemColors.WindowText;
             this.movieListView.HideSelection = false;
-            this.movieListView.Location = new System.Drawing.Point(12, 39);
+            this.movieListView.Location = new System.Drawing.Point(12, 33);
             this.movieListView.Name = "movieListView";
             this.movieListView.ShowGroups = false;
-            this.movieListView.Size = new System.Drawing.Size(1171, 399);
+            this.movieListView.Size = new System.Drawing.Size(1267, 453);
             this.movieListView.TabIndex = 0;
             this.movieListView.UseCompatibleStateImageBehavior = false;
             this.movieListView.View = System.Windows.Forms.View.Details;
@@ -138,9 +139,10 @@
             // purchaseColumn
             // 
             this.purchaseColumn.AspectName = "PurchaseButtonText";
+            this.purchaseColumn.ButtonSizing = BrightIdeasSoftware.OLVColumn.ButtonSizingMode.CellBounds;
             this.purchaseColumn.IsButton = true;
             this.purchaseColumn.Text = "Purchase";
-            this.purchaseColumn.Width = 446;
+            this.purchaseColumn.Width = 76;
             // 
             // viewLabel
             // 
@@ -186,7 +188,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1195, 450);
+            this.ClientSize = new System.Drawing.Size(1291, 498);
             this.Controls.Add(this.suggestionsButton);
             this.Controls.Add(this.ownedButton);
             this.Controls.Add(this.dashboardButton);

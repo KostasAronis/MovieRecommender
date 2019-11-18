@@ -25,18 +25,34 @@ namespace MovieRecommender.Models
         public string DescriptionButtonText { get => "View"; }
 
         [NotMapped]
-        public string LikeButtonText { get => 
-            MovieStatusString == MovieStatus.Liked.ToString() ||
-            MovieStatusString == MovieStatus.NotOwned.ToString() 
-            ? null 
-            : "Like"; 
+        public string LikeButtonText {
+            get 
+            {
+                if (MovieStatusString == MovieStatus.Liked.ToString())
+                {
+                    return "Un-Like";
+                }
+                if (MovieStatusString == MovieStatus.Owned.ToString())
+                {
+                    return "Like";
+                }
+                return null;
+            }
         }
         [NotMapped]
-        public string DislikeButtonText { get => 
-            MovieStatusString == MovieStatus.Disliked.ToString() ||
-            MovieStatusString == MovieStatus.NotOwned.ToString()
-            ? null 
-            : "Dislike"; 
+        public string DislikeButtonText {
+            get
+            {
+                if (MovieStatusString == MovieStatus.Disliked.ToString())
+                {
+                    return "Un-Dislike";
+                }
+                if (MovieStatusString == MovieStatus.Owned.ToString())
+                {
+                    return "Dislike";
+                }
+                return null;
+            }
         }
         [NotMapped]
         public string PurchaseButtonText { get =>
