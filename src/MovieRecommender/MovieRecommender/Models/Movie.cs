@@ -10,7 +10,7 @@ namespace MovieRecommender.Models
     public class Movie : BaseModel
     {
         public string Title { get; set; }
-        public List<MovieGenre> Genres { get; set; }
+        public virtual ICollection<MovieGenre> Genres { get; set; }
         public string Director { get; set; }
         public string Description { get; set; }
         public Double Price { get; set; }

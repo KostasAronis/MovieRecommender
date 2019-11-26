@@ -24,8 +24,23 @@ namespace MovieRecommender
             InitializeComponent();
             _db = db;
             _user = user;
+            if (_user.Age > 60)
+            {
+                SetAllControlsFont(this.Controls, 4);
+            }
             this.FormClosed += UserDashboardForm_FormClosed;
             goToDashboard();
+        }
+        public void SetAllControlsFont(Control.ControlCollection ctrls, int sizeChange)
+        {
+            foreach (Control ctrl in ctrls)
+            {
+                if (ctrl.Controls != null)
+                    SetAllControlsFont(ctrl.Controls, sizeChange);
+
+                ctrl.Font = new Font(ctrl.Font.FontFamily, ctrl.Font.Size + sizeChange);
+
+            }
         }
         private List<Movie> getDashboardMovies()
         {
@@ -51,16 +66,45 @@ namespace MovieRecommender
             var movies = _user.UserMovies.Select(um => um.Movie).ToList();
             return movies;
         }
+
         private List<Movie> getSuggestedMovies()
         {
-            var userMovies = _user.UserMovies.Select(um => um.Movie).ToList();
+            var userMovies = _user.UserMovies.Select(um => um.Movie);
             var movies = _db.Movies
                 .Include(m => m.Genres)
                 .ToList();
-             var selectedMovies = movies.Where(m =>
-                    !userMovies.Select(mov=>mov.Id).Contains(m.Id) &&
-                    m.Genres.Intersect(_user.FavoriteGenres).Any()
-                ).ToList();
+            var likedMovies = userMovies.Where(um => um.MovieStatusString == MovieStatus.Liked.ToString());
+            var favoriteGenres = _user.FavoriteGenres;
+            var favoriteDirectors = likedMovies.Select(um => um.Director).Distinct();
+            var usersWithMovies = _db.Users
+                .Include(u => u.UserMovies
+                    .Select(um => um.Movie)
+                )
+                .Include(u => u.UserMovies
+                    .Select(um => um.Movie.Genres)
+                )
+                .ToList();
+            var usersThatLikedTheSameMovies = usersWithMovies
+                .Where(u => u.UserMovies
+                    .Any(um => 
+                        um.MovieStatus == MovieStatus.Liked &&
+                        likedMovies.Any(lm => lm.Id == um.Movie.Id)
+                    )
+                );
+            var otherMoviesThoseUsersLike = usersThatLikedTheSameMovies
+                .SelectMany(u => u.UserMovies
+                    .Where(umm => !userMovies
+                        .Select(um => um.Id)
+                        .Contains(umm.Id)
+                    ).Select(m => m.Movie)
+                );
+
+            var selectedMovies = movies.Where(m =>
+                !userMovies.Select(mov => mov.Id).Contains(m.Id) &&
+                m.Genres.Intersect(favoriteGenres).Any() || // movies of his favorite genres
+                favoriteDirectors.Contains(m.Director) || //movies of his favorite director
+                otherMoviesThoseUsersLike.Select(mov => mov.Id).Contains(m.Id) // movies other people that like the same movies as this user like
+            ).ToList();
             return selectedMovies;
         }
 
@@ -158,16 +202,48 @@ namespace MovieRecommender
             }
             if (e.Column == purchaseColumn)
             {
-                var umovie = new UserMovie()
+
+                var creditCardNo = UserDashboardForm.ShowDialog("Insert credit card No.", "Purchase " + selectedMovie.Title);
+                if (String.IsNullOrEmpty(creditCardNo) || creditCardNo.Length != 19)
                 {
-                    Movie = selectedMovie,
-                    User = _user,
-                    MovieStatus = MovieStatus.Owned
-                };
-                _user.UserMovies.Add(umovie);
-                _db.SaveChanges();
+                    MessageBox.Show("Invalid card number!");
+                }
+                else
+                {
+                    var umovie = new UserMovie()
+                    {
+                        Movie = selectedMovie,
+                        User = _user,
+                        MovieStatus = MovieStatus.Owned
+                    };
+                    _user.UserMovies.Add(umovie);
+                    _db.SaveChanges();
+                }
             }
             refreshList();
+        }
+        public static string ShowDialog(string text, string caption)
+        {
+            Form prompt = new Form()
+            {
+                Width = 500,
+                Height = 150,
+                FormBorderStyle = FormBorderStyle.FixedDialog,
+                Text = caption,
+                StartPosition = FormStartPosition.CenterScreen
+            };
+            Label textLabel = new Label() { Left = 50, Top = 20, Text = text };
+            //TextBox textBox = new TextBox() { Left = 50, Top = 50, Width = 400 };
+            MaskedTextBox textBox = new MaskedTextBox() { Left = 50, Top = 50, Width = 400 };
+            textBox.Mask = "0000-0000-0000-0000";
+            Button confirmation = new Button() { Text = "Ok", Left = 350, Width = 100, Top = 70, DialogResult = DialogResult.OK };
+            confirmation.Click += (sender, e) => { prompt.Close(); };
+            prompt.Controls.Add(textBox);
+            prompt.Controls.Add(confirmation);
+            prompt.Controls.Add(textLabel);
+            prompt.AcceptButton = confirmation;
+
+            return prompt.ShowDialog() == DialogResult.OK ? textBox.Text : "";
         }
     }
 }

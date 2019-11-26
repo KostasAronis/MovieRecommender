@@ -41,7 +41,7 @@ namespace MovieRecommender
         }
         private string getGender()
         {
-            var gender = genderDropdown.SelectedItem.ToString();
+            var gender = genderDropdown.SelectedItem?.ToString() ?? "Other";
             return gender;
         }
         DateTime zeroTime = new DateTime(1, 1, 1);
@@ -72,7 +72,9 @@ namespace MovieRecommender
             _user.FavoriteGenres = genres.Where(g => selectedGenres.Contains(g.Name)).ToList();
             _user.UserStatus = UserStatus.ApprovedUser;
             _db.SaveChanges();
-
+            var dashboardForm = new UserDashboardForm(_db, _user);
+            this.Hide();
+            dashboardForm.Show();
         }
     }
 }

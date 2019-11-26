@@ -86,6 +86,7 @@ namespace MovieRecommender
             if (UserExists(email))
             {
                 MessageBox.Show("This email is already in use by a registered user!");
+                return;
             }
             _db.Users.Add(new User
             {

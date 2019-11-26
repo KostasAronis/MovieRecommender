@@ -70,10 +70,10 @@
             this.movieListView.Cursor = System.Windows.Forms.Cursors.Default;
             this.movieListView.ForeColor = System.Drawing.SystemColors.WindowText;
             this.movieListView.HideSelection = false;
-            this.movieListView.Location = new System.Drawing.Point(12, 33);
+            this.movieListView.Location = new System.Drawing.Point(12, 49);
             this.movieListView.Name = "movieListView";
             this.movieListView.ShowGroups = false;
-            this.movieListView.Size = new System.Drawing.Size(1267, 453);
+            this.movieListView.Size = new System.Drawing.Size(1267, 437);
             this.movieListView.TabIndex = 0;
             this.movieListView.UseCompatibleStateImageBehavior = false;
             this.movieListView.View = System.Windows.Forms.View.Details;
@@ -156,9 +156,9 @@
             // 
             // dashboardButton
             // 
-            this.dashboardButton.Location = new System.Drawing.Point(105, 10);
+            this.dashboardButton.Location = new System.Drawing.Point(169, 10);
             this.dashboardButton.Name = "dashboardButton";
-            this.dashboardButton.Size = new System.Drawing.Size(93, 23);
+            this.dashboardButton.Size = new System.Drawing.Size(200, 33);
             this.dashboardButton.TabIndex = 2;
             this.dashboardButton.Text = "View Dashboard";
             this.dashboardButton.UseVisualStyleBackColor = true;
@@ -166,9 +166,9 @@
             // 
             // ownedButton
             // 
-            this.ownedButton.Location = new System.Drawing.Point(204, 10);
+            this.ownedButton.Location = new System.Drawing.Point(375, 10);
             this.ownedButton.Name = "ownedButton";
-            this.ownedButton.Size = new System.Drawing.Size(75, 23);
+            this.ownedButton.Size = new System.Drawing.Size(225, 33);
             this.ownedButton.TabIndex = 3;
             this.ownedButton.Text = "View Owned";
             this.ownedButton.UseVisualStyleBackColor = true;
@@ -176,9 +176,10 @@
             // 
             // suggestionsButton
             // 
-            this.suggestionsButton.Location = new System.Drawing.Point(285, 10);
+            this.suggestionsButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.suggestionsButton.Location = new System.Drawing.Point(606, 10);
             this.suggestionsButton.Name = "suggestionsButton";
-            this.suggestionsButton.Size = new System.Drawing.Size(104, 23);
+            this.suggestionsButton.Size = new System.Drawing.Size(286, 33);
             this.suggestionsButton.TabIndex = 4;
             this.suggestionsButton.Text = "View Suggestions";
             this.suggestionsButton.UseVisualStyleBackColor = true;
