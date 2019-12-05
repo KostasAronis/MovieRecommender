@@ -42,34 +42,53 @@ namespace MovieRecommender
 
             }
         }
+        private void ConvertMoviesToRows(List<Movie> movies)
+        {
+            movies.ForEach(movie =>
+            {
+                var userMovie = _user.UserMovies
+                    .Where(um => um.Movie.Id == movie.Id)
+                    .FirstOrDefault();
+                if (userMovie != null)
+                {
+                    movie.MovieStatusString = userMovie.MovieStatus.ToString();
+                }
+                else
+                {
+                    movie.MovieStatusString = MovieStatus.NotOwned.ToString();
+                }
+            });
+        }
         private List<Movie> getDashboardMovies()
         {
             var movies = _db.Movies.Include( m => m.Genres ).ToList();
             movies.ForEach(movie =>
+            {
+                var userMovie = _user.UserMovies
+                    .Where(um => um.Movie.Id == movie.Id)
+                    .FirstOrDefault();
+                if (userMovie != null)
                 {
-                    var userMovie = _user.UserMovies
-                        .Where(um => um.Movie.Id == movie.Id)
-                        .FirstOrDefault();
-                    if (userMovie != null)
-                    {
-                        movie.MovieStatusString = userMovie.MovieStatus.ToString();
-                    }
-                    else
-                    {
-                        movie.MovieStatusString = MovieStatus.NotOwned.ToString();
-                    }
-                });
+                    movie.MovieStatusString = userMovie.MovieStatus.ToString();
+                }
+                else
+                {
+                    movie.MovieStatusString = MovieStatus.NotOwned.ToString();
+                }
+            });
+            ConvertMoviesToRows(movies);
             return movies;
         }
         private List<Movie> getOwnedMovies()
         {
             var movies = _user.UserMovies.Select(um => um.Movie).ToList();
+            ConvertMoviesToRows(movies);
             return movies;
         }
 
         private List<Movie> getSuggestedMovies()
         {
-            var userMovies = _user.UserMovies.Select(um => um.Movie);
+            var userMovies = _user.UserMovies.Select(um => um.Movie).ToList();
             var movies = _db.Movies
                 .Include(m => m.Genres)
                 .ToList();
@@ -100,11 +119,17 @@ namespace MovieRecommender
                 );
 
             var selectedMovies = movies.Where(m =>
-                !userMovies.Select(mov => mov.Id).Contains(m.Id) &&
-                m.Genres.Intersect(favoriteGenres).Any() || // movies of his favorite genres
-                favoriteDirectors.Contains(m.Director) || //movies of his favorite director
-                otherMoviesThoseUsersLike.Select(mov => mov.Id).Contains(m.Id) // movies other people that like the same movies as this user like
+                (
+                    !userMovies.Select(mov => mov.Id).Contains(m.Id)
+                )
+                &&
+                (
+                    m.Genres.Intersect(favoriteGenres).Any() || // movies of his favorite genres
+                    favoriteDirectors.Contains(m.Director) || //movies of his favorite director
+                    otherMoviesThoseUsersLike.Select(mov => mov.Id).Contains(m.Id) // movies other people that like the same movies as this user like
+                )
             ).ToList();
+            ConvertMoviesToRows(selectedMovies);
             return selectedMovies;
         }
 
